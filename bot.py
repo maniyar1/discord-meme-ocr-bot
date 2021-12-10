@@ -34,8 +34,6 @@ def index_image(url, jump_url, guild_id):
             response = requests.get(url)
             im = np.array(Image.open(BytesIO(response.content)))
             im = cv2.bilateralFilter(im,5, 55,60)
-            #im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-            #_, im = cv2.threshold(im, 200, 255, 1)
             texts = reader.readtext(im, detail=0, paragraph=True)
             for text in texts:
                 print(text)
@@ -74,9 +72,9 @@ async def on_message(message):
                 await message.channel.send("\n".join(results_list))
             else:
                 await message.channel.send("No results")
-    elif message.content.startswith('$meme index'):
+    elif message.content.startswith('$meme index'): #TODO implement indexing all existing memes
             querystring = message.content.split(maxsplit=2)[2]
             print(querystring)
 
-client.run("OTE0MzEyNjA2OTIyMTk5MTIx.YaLN-A.HAujz3wYde0hu2T3oWmanHDXOU0")
+client.run("")
 
