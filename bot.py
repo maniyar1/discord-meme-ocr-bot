@@ -28,7 +28,7 @@ else:
 
 client = discord.Client()
 reader = Reader(["en"])
-
+stop_index = {}
 def index_image(url, jump_url, guild_id):
             writer = AsyncWriter(ix)
             response = requests.get(url)
@@ -73,8 +73,20 @@ async def on_message(message):
             else:
                 await message.channel.send("No results")
     elif message.content.startswith('$meme index'): #TODO implement indexing all existing memes
-            querystring = message.content.split(maxsplit=2)[2]
-            print(querystring)
+            stop_index[message.channel.id] = False
+            await message.channel.send("Starting index, to cancel: `$meme cancel index`")
+            counter = 0
+            status_msg = await message.channel.send("Messages searched: " + str(counter))
+            async for history_message in message.channel.history(limit=None):
+                if stop_index[message.channel.id]: 
+                    stop_index[message.channel.id] = False
+                    await message.channel.send("Cancelled index")
+                    break
+                check_message_and_index(history_message)
+                counter += 1
+                status_content = "Messages searched: " + str(counter)
+                await status_msg.edit(content=status_content)
+    if message.content.startswith('$meme cancel index'):
+        stop_index[message.channel.id] = True 
 
 client.run("")
-
